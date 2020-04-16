@@ -14,7 +14,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="4dp"
-        android:background="#AB27B0"
+        android:background="@color/simonRed"
         app:layout_constraintBottom_toTopOf="@+id/view3"
         app:layout_constraintEnd_toStartOf="@+id/view2"
         app:layout_constraintStart_toStartOf="parent"
@@ -28,7 +28,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="4dp"
-        android:background="#FFB522"
+        android:background="@color/simonYellow"
         app:layout_constraintBottom_toTopOf="@+id/view4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/view"
@@ -42,7 +42,7 @@
         android:layout_marginTop="4dp"
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="8dp"
-        android:background="#8BC34A"
+        android:background="@color/simonGreen"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/view4"
         app:layout_constraintStart_toStartOf="parent"
@@ -56,7 +56,7 @@
         android:layout_marginTop="4dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:background="#2196F3"
+        android:background="@color/simonBlue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/view3"
@@ -82,40 +82,88 @@
         android:textColor="#000000"
         android:textSize="90sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/play_Simon_button"
+        android:id="@+id/play_simon_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
-        app:layout_constraintBottom_toTopOf="@+id/play_simonReverse_button"
+        android:fontFamily="sans-serif-condensed"
+        android:text="Play\nSimon"
+        android:textAllCaps="false"
+        android:textSize="28sp"
+        app:layout_constraintBottom_toTopOf="@id/play_simonRewind_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title_tv" />
 
     <Button
-        android:id="@+id/play_simonReverse_button"
+        android:id="@+id/play_simonRewind_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
-        app:layout_constraintBottom_toTopOf="@id/play_s"
+        android:fontFamily="sans-serif-condensed"
+        android:text="Play\nSimon Rewind"
+        android:textAllCaps="false"
+        android:textSize="28sp"
+        app:layout_constraintBottom_toTopOf="@id/play_simonSurprise_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/play_Simon_button" />
+        app:layout_constraintTop_toBottomOf="@id/play_simon_button" />
 
     <Button
-        android:id="@+id/play_s"
+        android:id="@+id/play_simonSurprise_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="sans-serif-condensed"
+        android:text="Play\nSimon Surprise"
+        android:textAllCaps="false"
+        android:textSize="28sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/play_simonReverse_button" />
+        app:layout_constraintTop_toBottomOf="@id/play_simonRewind_button" />
+
+    <ImageButton
+        android:id="@+id/simon_info_button"
+        android:layout_width="50dp"
+        android:layout_height="0dp"
+        android:background="#00FFFFFF"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="@+id/play_simon_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/play_simon_button"
+        app:layout_constraintTop_toTopOf="@+id/play_simon_button"
+        app:srcCompat="@android:drawable/ic_menu_info_details" />
+
+    <ImageButton
+        android:id="@+id/simonRewind_info_button"
+        android:layout_width="50dp"
+        android:layout_height="0dp"
+        android:background="#00FFFFFF"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="@+id/play_simonRewind_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/play_simonRewind_button"
+        app:layout_constraintTop_toTopOf="@+id/play_simonRewind_button"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@android:drawable/ic_menu_info_details" />
+
+    <ImageButton
+        android:id="@+id/simon_info_button3"
+        android:layout_width="50dp"
+        android:layout_height="0dp"
+        android:background="#00FFFFFF"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="@+id/play_simonSurprise_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/play_simonSurprise_button"
+        app:layout_constraintTop_toTopOf="@+id/play_simonSurprise_button"
+        app:srcCompat="@android:drawable/ic_menu_info_details" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
