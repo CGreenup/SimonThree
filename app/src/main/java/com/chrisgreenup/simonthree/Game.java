@@ -91,9 +91,9 @@ implements View.OnClickListener {
         }else{
             history = new ArrayList<>();
         }
-        history.add(button.next());
 
         setupExtraButton(gameMode);
+
 
         SimonSay simonSay = new SimonSay();
         simonSay.execute();
@@ -154,14 +154,22 @@ implements View.OnClickListener {
             //Make the button pressed beep
             playBeep(currentColor);
 
-            history.add(button.next());
-
             Log.i("SIMONHISTORY", "_____________________");
             for (int i = 0; i < history.size(); i++) {
                 Log.i("SIMONHISTORY", history.get(i).toString());
             }
-            SimonSay ss = new SimonSay();
-            ss.execute();
+
+            //If the player has entered the correct sequence
+            if(pickedTheRightColor(currentColor)){
+                if (index == history.size()){
+                    SimonSay ss = new SimonSay();
+                    ss.execute();
+                }
+            }
+            else{
+                restartGame();
+            }
+
         }
 
     }
@@ -233,7 +241,40 @@ implements View.OnClickListener {
 
     }
 
+    private void restartGame(){
+        if (history != null){
+            history.clear();
+        }else{
+            history = new ArrayList<>();
+        }
 
+        SimonSay simonSay = new SimonSay();
+        simonSay.execute();
+    }
+
+    private boolean pickedTheRightColor(buttonCommands color){
+        //If the player isn't playing Simon Reverse, use normal rules
+        if (!gameMode.equals("reverse")){
+            if (history.get(index).equals(color)){
+                Log.i("SIMONDEBUG", "correct color, not reverse");
+                index++;
+                return true;
+            }
+        }
+        //otherwise, use rules that are backwards compared to Simon
+        else{
+            int size = history.size();
+            if(history.get(size-index).equals(color)){
+                Log.i("SIMONDEBUG", "correct color, reverse");
+                index++;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    //Sets up the audio
     @Override
     protected void onResume() {
         super.onResume();
@@ -265,10 +306,12 @@ implements View.OnClickListener {
         beep4Id  = soundPool.load(this, R.raw.bleep4, 1);
     }
 
+    //Algorithm for controlling Simon, the opponent
     class SimonSay extends AsyncTask<Void, Void, Void>{
         @Override
         protected Void doInBackground(Void... voids) {
             playersTurn = false;
+            history.add(button.next());
 
             try {
                 Thread.sleep(800);
@@ -334,6 +377,7 @@ implements View.OnClickListener {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             playersTurn = true;
+            index = 0;
         }
     }
 }
