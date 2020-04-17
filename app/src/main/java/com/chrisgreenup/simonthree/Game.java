@@ -1,7 +1,5 @@
 package com.chrisgreenup.simonthree;
 
-//TODO: add the thing to stop music from playing in the background
-//TODO: add high score
 //TODO: add writing high score to file
 //TODO: write high score from file during onCreate, unless file is empty
 //TODO: add notifier of loss
@@ -83,8 +81,7 @@ implements View.OnClickListener {
         intent = getIntent();
         gameMode = intent.getStringExtra("game");
 
-//TEMP
-currentscore = 0;
+        currentscore = 0;
 
 
         String id = "simon_button_";
@@ -95,13 +92,10 @@ currentscore = 0;
             imageButton.setOnClickListener(this);
         }
 
-        restartGame();
-
         setupExtraButton(gameMode);
 
+        restartGame();
 
-        SimonSay simonSay = new SimonSay();
-        simonSay.execute();
     }
 
     void setupExtraButton(String gameMode){
@@ -316,6 +310,17 @@ currentscore = 0;
         beep2Id  = soundPool.load(this, R.raw.bleep2, 1);
         beep3Id  = soundPool.load(this, R.raw.bleep3, 1);
         beep4Id  = soundPool.load(this, R.raw.bleep4, 1);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (soundPool != null){
+            soundPool.release();
+            soundPool = null;
+
+            soundsLoaded.clear();
+        }
     }
 
     //Algorithm for controlling Simon, the opponent
