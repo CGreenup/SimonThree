@@ -18,7 +18,7 @@
         app:layout_constraintBottom_toTopOf="@+id/simon_button_2"
         app:layout_constraintEnd_toStartOf="@+id/simon_button_1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/high_score_tv"
         app:srcCompat="@drawable/light_on" />
 
     <ImageButton
@@ -33,7 +33,7 @@
         app:layout_constraintBottom_toTopOf="@+id/simon_button_3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/simon_button_0"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/high_score_tv"
         app:srcCompat="@drawable/light_on" />
 
     <ImageButton
@@ -65,4 +65,18 @@
         app:layout_constraintStart_toEndOf="@+id/simon_button_2"
         app:layout_constraintTop_toBottomOf="@+id/simon_button_1"
         app:srcCompat="@drawable/light_off" />
+
+    <TextView
+        android:id="@+id/high_score_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="#FFE66B"
+        android:fontFamily="sans-serif-black"
+        android:text="Highscore:"
+        android:textAlignment="center"
+        android:textColor="#C6000000"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
