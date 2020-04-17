@@ -154,7 +154,7 @@
         app:srcCompat="@android:drawable/ic_menu_info_details" />
 
     <ImageButton
-        android:id="@+id/simon_info_button3"
+        android:id="@+id/simonSurprise_info_button"
         android:layout_width="50dp"
         android:layout_height="0dp"
         android:background="#00FFFFFF"
