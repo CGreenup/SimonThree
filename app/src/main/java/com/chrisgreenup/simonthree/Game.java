@@ -1,8 +1,6 @@
 package com.chrisgreenup.simonthree;
 
 //TODO: make comparison of user input to one place in the history
-//TODO: add stuff to history
-//TODO: make player wait for simon to finish showing pattern
 //TODO: add high score
 //TODO: add writing high score to file
 //TODO: write high score from file during onCreate, unless file is empty
@@ -73,8 +71,9 @@ implements View.OnClickListener {
         setContentView(R.layout.game_board);
         soundsLoaded = new HashSet<Integer>();
 
-        intent = new Intent();
+        intent = getIntent();
         gameMode = intent.getStringExtra("game");
+        Log.i("TESTTT", "Game:" + gameMode);
 
 
         //TODO: Set up buttons based on game mode (mainly color)
@@ -94,15 +93,31 @@ implements View.OnClickListener {
         }
         history.add(button.next());
 
-        imageButtonRed = findViewById(R.id.simon_button_0);
-        imageButtonYellow = findViewById(R.id.simon_button_1);
-        imageButtonGreen = findViewById(R.id.simon_button_2);
-        imageButtonBlue = findViewById(R.id.simon_button_3);
+        setupExtraButton(gameMode);
 
         SimonSay simonSay = new SimonSay();
         simonSay.execute();
     }
 
+    void setupExtraButton(String gameMode){
+        imageButtonRed = findViewById(R.id.simon_button_0);
+        imageButtonYellow = findViewById(R.id.simon_button_1);
+        imageButtonGreen = findViewById(R.id.simon_button_2);
+        imageButtonBlue = findViewById(R.id.simon_button_3);
+
+        if(gameMode.equals("surprise")){
+            imageButtonBlue.setBackgroundColor(0xff818181);
+            imageButtonRed.setBackgroundColor(0xff818181);
+            imageButtonYellow.setBackgroundColor(0xff818181);
+            imageButtonGreen.setBackgroundColor(0xff818181);
+        }
+        else {
+            imageButtonRed.setBackgroundColor(getResources().getColor( R.color.simonRed));
+            imageButtonYellow.setBackgroundColor(getResources().getColor( R.color.simonYellow));
+            imageButtonGreen.setBackgroundColor(getResources().getColor( R.color.simonGreen));
+            imageButtonBlue.setBackgroundColor(getResources().getColor( R.color.simonBlue));
+        }
+    }
 
     @Override
     public void onClick(View view) {
@@ -183,7 +198,7 @@ implements View.OnClickListener {
     }
 
     private void playBeep(buttonCommands color){
-        if (gameMode != "surprise"){
+        if (!gameMode.equals("surprise")){
             if (color.equals(button.RED)){
                 if (soundsLoaded.contains(beep1Id)){
                     soundPool.play(beep1Id, 1.0f, 1.0f,

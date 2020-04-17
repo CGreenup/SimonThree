@@ -19,36 +19,45 @@ public class MainActivity extends AppCompatActivity
         findViewById(R.id.simonRewind_info_button).setOnClickListener(this);
         findViewById(R.id.simonSurprise_info_button).setOnClickListener(this);
         findViewById(R.id.play_simon_button).setOnClickListener(this);
+        findViewById(R.id.play_simonSurprise_button).setOnClickListener(this);
+        findViewById(R.id.play_simonRewind_button).setOnClickListener(this);
 
     }
 
+
+
     @Override
     public void onClick(View view) {
-        Intent intent;
+        Intent intent = null;
 
-        if ((view.getId()) == R.id.simon_info_button){
+        int id = view.getId();
+
+        if (id == R.id.simon_info_button){
             intent = new Intent(getBaseContext(), GameInfo.class);
             intent.putExtra("title", "simon");
         }
-        else if (view.getId() == R.id.simonRewind_info_button){
+        else if (id == R.id.simonRewind_info_button){
             intent = new Intent(getBaseContext(), GameInfo.class);
             intent.putExtra("title", "rewind");
         }
-        else if (view.getId() == R.id.simonSurprise_info_button){
+        else if (id == R.id.simonSurprise_info_button){
             intent = new Intent(getBaseContext(), GameInfo.class);
             intent.putExtra("title", "surprise");
         }
-        else if (view.getId() == R.id.play_simonRewind_button){
-            intent = new Intent(getBaseContext(), Game.class);
+        else if (id == R.id.play_simonRewind_button){
+            intent = new Intent(getApplicationContext(), Game.class);
             intent.putExtra("game", "rewind");
+            Log.i("TESTTT", "rewind");
         }
-        else if (view.getId() == R.id.play_simonSurprise_button){
-            intent = new Intent(getBaseContext(), Game.class);
+        else if (id == R.id.play_simonSurprise_button){
+            intent = new Intent(getApplicationContext(), Game.class);
             intent.putExtra("game", "surprise");
+            Log.i("TESTTT", "surprise");
         }
-        else{
-            intent = new Intent(getBaseContext(), Game.class);
+        else if (id == R.id.play_simon_button){
+            intent = new Intent(getApplicationContext(), Game.class);
             intent.putExtra("game", "simon");
+            Log.i("TESTTT", "classic");
         }
 
         startActivity(intent);
