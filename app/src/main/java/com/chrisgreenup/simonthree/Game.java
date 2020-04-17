@@ -1,9 +1,10 @@
 package com.chrisgreenup.simonthree;
 
-//TODO: make comparison of user input to one place in the history
+//TODO: add the thing to stop music from playing in the background
 //TODO: add high score
 //TODO: add writing high score to file
 //TODO: write high score from file during onCreate, unless file is empty
+//TODO: add notifier of loss
 
 import android.content.Intent;
 import android.media.AudioAttributes;
@@ -13,6 +14,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -36,9 +38,15 @@ implements View.OnClickListener {
 
     //For determining the user's place in the sequence
     private int index;
-
+    //For determing if the player can press buttons
     private boolean playersTurn;
 
+    //Variable for keeping track of the highest score
+    private int highscore;
+
+    private int currentscore;
+
+    //Enum of all of the colors, and a method to get a random color
     private enum buttonCommands{
         RED, YELLOW, GREEN, BLUE;
         private static buttonCommands [] buttons = values();
@@ -60,6 +68,7 @@ implements View.OnClickListener {
     private SoundPool soundPool;
     private Set<Integer> soundsLoaded;
 
+    //beep ids to have sound setup in onResume, but played in onClick
     int beep1Id;
     int beep2Id;
     int beep3Id;
@@ -73,10 +82,10 @@ implements View.OnClickListener {
 
         intent = getIntent();
         gameMode = intent.getStringExtra("game");
-        Log.i("TESTTT", "Game:" + gameMode);
 
+//TEMP
+currentscore = 0;
 
-        //TODO: Set up buttons based on game mode (mainly color)
 
         String id = "simon_button_";
         for (int i = 0; i < 4; i++){
@@ -86,11 +95,7 @@ implements View.OnClickListener {
             imageButton.setOnClickListener(this);
         }
 
-        if (history != null){
-            history.clear();
-        }else{
-            history = new ArrayList<>();
-        }
+        restartGame();
 
         setupExtraButton(gameMode);
 
@@ -142,7 +147,7 @@ implements View.OnClickListener {
                     break;
             }
 
-            Log.i("SIMONSAYS", currentColor.toString());
+            Log.i("DSIMONSAYS", currentColor.toString());
 
             //Make the button pressed beep
             //soundsLoaded = new HashSet<Integer>();
@@ -154,14 +159,10 @@ implements View.OnClickListener {
             //Make the button pressed beep
             playBeep(currentColor);
 
-            Log.i("SIMONHISTORY", "_____________________");
-            for (int i = 0; i < history.size(); i++) {
-                Log.i("SIMONHISTORY", history.get(i).toString());
-            }
-
             //If the player has entered the correct sequence
             if(pickedTheRightColor(currentColor)){
                 if (index == history.size()){
+                    updateScores();
                     SimonSay ss = new SimonSay();
                     ss.execute();
                 }
@@ -172,6 +173,17 @@ implements View.OnClickListener {
 
         }
 
+    }
+
+    private void updateScores(){
+        currentscore = history.size();
+
+        if (currentscore > highscore)
+            highscore = currentscore;
+
+        TextView scoreTv = findViewById(R.id.high_score_tv);
+        String s = getResources().getString(R.string.highscore_text) + highscore;
+        scoreTv.setText(s);
     }
 
     //Class for making the buttons on-screen flash as if there were an LED behind them
@@ -253,19 +265,19 @@ implements View.OnClickListener {
     }
 
     private boolean pickedTheRightColor(buttonCommands color){
-        //If the player isn't playing Simon Reverse, use normal rules
-        if (!gameMode.equals("reverse")){
+        //If the player isn't playing Simon Rewind, use normal rules
+        if (!gameMode.equals("rewind")){
             if (history.get(index).equals(color)){
-                Log.i("SIMONDEBUG", "correct color, not reverse");
+                Log.i("DSIMONDEBUG", "correct color, not rewind");
                 index++;
                 return true;
             }
         }
         //otherwise, use rules that are backwards compared to Simon
         else{
-            int size = history.size();
+            int size = history.size() - 1;
             if(history.get(size-index).equals(color)){
-                Log.i("SIMONDEBUG", "correct color, reverse");
+                Log.i("DSIMONDEBUG", "correct color, rewind");
                 index++;
                 return true;
             }
@@ -313,12 +325,20 @@ implements View.OnClickListener {
             playersTurn = false;
             history.add(button.next());
 
+
+            Log.i("DSIMONHISTORY", "_____________________");
+            for (int i = 0; i < history.size(); i++) {
+                Log.i("DSIMONHISTORY", history.get(i).toString());
+            }
+
+
+
             try {
                 Thread.sleep(800);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            Log.i("SIMONDEBUG", "history size = " + history.size());
+            Log.i("DSIMONDEBUG", "history size = " + history.size());
             for(int i = 0; i < history.size(); i++) {
                 try {
                     playBeep(history.get(i));
@@ -367,7 +387,7 @@ implements View.OnClickListener {
             else if (color.equals(buttonCommands.GREEN))
                 return imageButtonGreen;
             else{
-                Log.i("SIMONHISTORY", "ERROR WITH getCorrespondingButton");
+                Log.i("DSIMONHISTORY", "ERROR WITH getCorrespondingButton");
                 return imageButtonRed;
             }
         }
