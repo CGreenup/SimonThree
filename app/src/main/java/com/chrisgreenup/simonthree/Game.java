@@ -7,6 +7,7 @@ package com.chrisgreenup.simonthree;
 //TODO: add writing high score to file
 //TODO: write high score from file during onCreate, unless file is empty
 
+import android.content.Intent;
 import android.media.AudioAttributes;
 import android.media.SoundPool;
 import android.os.AsyncTask;
@@ -25,6 +26,8 @@ import java.util.Set;
 public class Game extends AppCompatActivity
 implements View.OnClickListener {
 
+    private static Intent intent;
+
 
     //For determining the setup of the buttons:
     //in Simon: Surprise, the buttons will be grayscale and all will play the same note
@@ -36,57 +39,115 @@ implements View.OnClickListener {
     //For determining the user's place in the sequence
     private int index;
 
+    private boolean playersTurn;
+
     private enum buttonCommands{
         RED, YELLOW, GREEN, BLUE;
         private static buttonCommands [] buttons = values();
         public buttonCommands next(){
             Random rand = new Random();
-            return buttons[rand.nextInt(buttons.length)];
+            return buttons[(this.ordinal() + rand.nextInt(buttons.length)) % 4];
         }
     }
 
-    private buttonCommands button;
+    private buttonCommands button = buttonCommands.RED;
+
+    //Variables of imagebuttons to let Simon flash and beep them to signal the player
+    private ImageButton imageButtonRed ;
+    private ImageButton imageButtonYellow ;
+    private ImageButton imageButtonGreen ;
+    private ImageButton imageButtonBlue;
+
 
     private SoundPool soundPool;
     private Set<Integer> soundsLoaded;
 
-    int bleep1Id;
-    int bleep2Id;
-    int bleep3Id;
-    int bleep4Id;
+    int beep1Id;
+    int beep2Id;
+    int beep3Id;
+    int beep4Id;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.game_board);
+        soundsLoaded = new HashSet<Integer>();
+
+        intent = new Intent();
+        gameMode = intent.getStringExtra("game");
+
+
+        //TODO: Set up buttons based on game mode (mainly color)
+
+        String id = "simon_button_";
+        for (int i = 0; i < 4; i++){
+            int resID = getResources().getIdentifier(id + i, "id", getPackageName());
+            ImageButton imageButton = findViewById(resID);
+            imageButton.setImageResource(R.drawable.light_off);
+            imageButton.setOnClickListener(this);
+        }
+
+        if (history != null){
+            history.clear();
+        }else{
+            history = new ArrayList<>();
+        }
+        history.add(button.next());
+
+        imageButtonRed = findViewById(R.id.simon_button_0);
+        imageButtonYellow = findViewById(R.id.simon_button_1);
+        imageButtonGreen = findViewById(R.id.simon_button_2);
+        imageButtonBlue = findViewById(R.id.simon_button_3);
+
+        SimonSay simonSay = new SimonSay();
+        simonSay.execute();
+    }
+
 
     @Override
     public void onClick(View view) {
-        buttonCommands currentColor;
+        if(playersTurn){
+            buttonCommands currentColor;
 
-        switch (view.getId()){
-            case (R.id.simon_button_0):
-                currentColor = button.RED;
-                break;
-            case (R.id.simon_button_1):
-                currentColor = button.YELLOW;
-                break;
-            case (R.id.simon_button_2):
-                currentColor = button.GREEN;
-                break;
-            case (R.id.simon_button_3):
-                currentColor = button.BLUE;
-                break;
-            default:
-                currentColor = null;
-                break;
+            switch (view.getId()){
+                case (R.id.simon_button_0):
+                    currentColor = button.RED;
+                    break;
+                case (R.id.simon_button_1):
+                    currentColor = button.YELLOW;
+                    break;
+                case (R.id.simon_button_2):
+                    currentColor = button.GREEN;
+                    break;
+                case (R.id.simon_button_3):
+                    currentColor = button.BLUE;
+                    break;
+                default:
+                    currentColor = null;
+                    break;
+            }
+
+            Log.i("SIMONSAYS", currentColor.toString());
+
+            //Make the button pressed beep
+            //soundsLoaded = new HashSet<Integer>();
+
+            //Make the button pressed flash
+            ButtonFlash bf = new ButtonFlash();
+            bf.execute((ImageButton) view);
+
+            //Make the button pressed beep
+            playBeep(currentColor);
+
+            history.add(button.next());
+
+            Log.i("SIMONHISTORY", "_____________________");
+            for (int i = 0; i < history.size(); i++) {
+                Log.i("SIMONHISTORY", history.get(i).toString());
+            }
+            SimonSay ss = new SimonSay();
+            ss.execute();
         }
-
-        Log.i("SIMONSAYS", currentColor.toString());
-
-        //Make the button pressed beep
-        //soundsLoaded = new HashSet<Integer>();
-
-        //Make the button pressed flash
-        ButtonFlash bf = new ButtonFlash();
-        bf.execute((ImageButton) view);
-
-        playBeep(currentColor);
 
     }
 
@@ -95,77 +156,68 @@ implements View.OnClickListener {
 
         @Override
         protected Void doInBackground(final ImageButton... imageButtons) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    imageButtons[0].setImageResource(R.drawable.light_on);
-                }
-            });
 
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        imageButtons[0].setImageResource(R.drawable.light_on);
+                    }
+                });
 
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    imageButtons[0].setImageResource(R.drawable.light_off);
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-            });
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        imageButtons[0].setImageResource(R.drawable.light_off);
+                    }
+                });
+
 
             return null;
         }
     }
 
     private void playBeep(buttonCommands color){
-        if (color.equals(button.RED)){
-            if (soundsLoaded.contains(bleep1Id)){
-                soundPool.play(bleep1Id, 1.0f, 1.0f,
-                        0, 0, 1.0f);
+        if (gameMode != "surprise"){
+            if (color.equals(button.RED)){
+                if (soundsLoaded.contains(beep1Id)){
+                    soundPool.play(beep1Id, 1.0f, 1.0f,
+                            0, 0, 1.0f);
+                }
+            }
+            else if (color.equals(button.YELLOW)){
+                if (soundsLoaded.contains(beep2Id)){
+                    soundPool.play(beep2Id, 1.0f, 1.0f,
+                            0, 0, 1.0f);
+                }
+            }
+            else if (color.equals(button.GREEN)){
+                if (soundsLoaded.contains(beep3Id)){
+                    soundPool.play(beep3Id, 1.0f, 1.0f,
+                            0, 0, 1.0f);
+                }
+            }
+            else if (color.equals(button.BLUE)){
+                if (soundsLoaded.contains(beep4Id)){
+                    soundPool.play(beep4Id, 1.0f, 1.0f,
+                            0, 0, 1.0f);
+                }
             }
         }
-        else if (color.equals(button.YELLOW)){
-            if (soundsLoaded.contains(bleep2Id)){
-                soundPool.play(bleep2Id, 1.0f, 1.0f,
-                        0, 0, 1.0f);
-            }
-        }
-        else if (color.equals(button.GREEN)){
-            if (soundsLoaded.contains(bleep3Id)){
-                soundPool.play(bleep3Id, 1.0f, 1.0f,
-                        0, 0, 1.0f);
-            }
-        }
-        else if (color.equals(button.BLUE)){
-            if (soundsLoaded.contains(bleep4Id)){
-                soundPool.play(bleep4Id, 1.0f, 1.0f,
+        else{
+            if (soundsLoaded.contains(beep3Id)){
+                soundPool.play(beep3Id, 1.0f, 1.0f,
                         0, 0, 1.0f);
             }
         }
 
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.game_board);
-        soundsLoaded = new HashSet<Integer>();
-
-        //TODO: Set up buttons based on game mode (mainly color)
-
-        String id = "simon_button_";
-        for (int i = 0; i < 4; i++){
-            int resID = getResources().getIdentifier(id + i, "id", getPackageName());
-            ImageButton button = findViewById(resID);
-            button.setImageResource(R.drawable.light_off);
-            button.setOnClickListener(this);
-        }
-
-        if (history != null)
-            history.clear();
-    }
 
     @Override
     protected void onResume() {
@@ -192,18 +244,81 @@ implements View.OnClickListener {
             }
         });
 
-        bleep1Id = soundPool.load(this, R.raw.bleep1, 1);
-        bleep2Id = soundPool.load(this, R.raw.bleep2, 1);
-        bleep3Id = soundPool.load(this, R.raw.bleep3, 1);
-        bleep4Id = soundPool.load(this, R.raw.bleep4, 1);
+        beep1Id  = soundPool.load(this, R.raw.bleep1, 1);
+        beep2Id  = soundPool.load(this, R.raw.bleep2, 1);
+        beep3Id  = soundPool.load(this, R.raw.bleep3, 1);
+        beep4Id  = soundPool.load(this, R.raw.bleep4, 1);
     }
 
-    class simonPlay extends AsyncTask<Void, Void, Void>{
+    class SimonSay extends AsyncTask<Void, Void, Void>{
         @Override
         protected Void doInBackground(Void... voids) {
-            history.add(button.next());
+            playersTurn = false;
+
+            try {
+                Thread.sleep(800);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Log.i("SIMONDEBUG", "history size = " + history.size());
+            for(int i = 0; i < history.size(); i++) {
+                try {
+                    playBeep(history.get(i));
+                    buttonFlash(getCorrespondingButton(history.get(i)));
+                    Thread.sleep(600);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
 
             return null;
+        }
+
+        private void buttonFlash(final ImageButton button){
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    button.setImageResource(R.drawable.light_on);
+                }
+            });
+
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    button.setImageResource(R.drawable.light_off);
+                }
+            });
+
+
+        }
+
+        private ImageButton getCorrespondingButton(buttonCommands color){
+            if (color.equals(buttonCommands.RED))
+                return imageButtonRed;
+            else if (color.equals(buttonCommands.BLUE))
+                return imageButtonBlue;
+            else if (color.equals(buttonCommands.YELLOW))
+                return imageButtonYellow;
+            else if (color.equals(buttonCommands.GREEN))
+                return imageButtonGreen;
+            else{
+                Log.i("SIMONHISTORY", "ERROR WITH getCorrespondingButton");
+                return imageButtonRed;
+            }
+        }
+
+        //After Simon's turn, set it to the players turn and allow them to press buttons
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            playersTurn = true;
         }
     }
 }
