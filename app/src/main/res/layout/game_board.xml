@@ -72,7 +72,7 @@
         android:layout_height="wrap_content"
         android:background="#FFE66B"
         android:fontFamily="sans-serif-black"
-        android:text="Highscore:"
+        android:text="@string/highscore_text"
         android:textAlignment="center"
         android:textColor="#C6000000"
         android:textSize="30sp"

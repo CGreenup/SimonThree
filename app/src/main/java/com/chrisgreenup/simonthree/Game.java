@@ -4,6 +4,7 @@ package com.chrisgreenup.simonthree;
 //TODO: write high score from file during onCreate, unless file is empty
 //TODO: add notifier of loss
 
+import android.content.Context;
 import android.content.Intent;
 import android.media.AudioAttributes;
 import android.media.SoundPool;
@@ -16,9 +17,17 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
+import java.util.Scanner;
 import java.util.Set;
 
 public class Game extends AppCompatActivity
@@ -83,6 +92,9 @@ implements View.OnClickListener {
 
         currentscore = 0;
 
+        TextView highscoreTv = findViewById(R.id.high_score_tv);
+        highscoreTv.setText(getSavedHighscore());
+
 
         String id = "simon_button_";
         for (int i = 0; i < 4; i++){
@@ -98,6 +110,8 @@ implements View.OnClickListener {
 
     }
 
+    //Initializes the instance variables of the imageButtons
+    //Doubles in function to change the buttons gray if the game mode is Simon: Surprise
     void setupExtraButton(String gameMode){
         imageButtonRed = findViewById(R.id.simon_button_0);
         imageButtonYellow = findViewById(R.id.simon_button_1);
@@ -125,16 +139,16 @@ implements View.OnClickListener {
 
             switch (view.getId()){
                 case (R.id.simon_button_0):
-                    currentColor = button.RED;
+                    currentColor = buttonCommands.RED;
                     break;
                 case (R.id.simon_button_1):
-                    currentColor = button.YELLOW;
+                    currentColor = buttonCommands.YELLOW;
                     break;
                 case (R.id.simon_button_2):
-                    currentColor = button.GREEN;
+                    currentColor = buttonCommands.GREEN;
                     break;
                 case (R.id.simon_button_3):
-                    currentColor = button.BLUE;
+                    currentColor = buttonCommands.BLUE;
                     break;
                 default:
                     currentColor = null;
@@ -172,11 +186,13 @@ implements View.OnClickListener {
     private void updateScores(){
         currentscore = history.size();
 
-        if (currentscore > highscore)
+        if (currentscore > highscore){
             highscore = currentscore;
+            saveHighscore();
+        }
 
         TextView scoreTv = findViewById(R.id.high_score_tv);
-        String s = getResources().getString(R.string.highscore_text) + highscore;
+        String s = getResources().getString(R.string.highscore_text) + " " + highscore;
         scoreTv.setText(s);
     }
 
@@ -212,6 +228,7 @@ implements View.OnClickListener {
     }
 
     private void playBeep(buttonCommands color){
+
         if (!gameMode.equals("surprise")){
             if (color.equals(button.RED)){
                 if (soundsLoaded.contains(beep1Id)){
@@ -279,6 +296,53 @@ implements View.OnClickListener {
 
         return false;
     }
+
+    private void saveHighscore(){
+
+        FileOutputStream fos = null;
+        try {
+            String filename = gameMode + ".txt";
+
+            fos = openFileOutput(filename, Context.MODE_PRIVATE);
+            OutputStreamWriter osw = new OutputStreamWriter(fos);
+            BufferedWriter bw = new BufferedWriter(osw);
+            PrintWriter pw = new PrintWriter(bw);
+
+            pw.println(highscore);
+
+            pw.close();
+        }
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String getSavedHighscore(){
+        FileInputStream fis = null;
+        String filename = gameMode + ".txt";
+        String output = getResources().getString(R.string.highscore_text) + " ";
+
+        try {
+            fis = openFileInput(filename);
+
+            Scanner scanner = new Scanner(fis);
+
+            if (scanner.hasNextInt())
+                highscore = scanner.nextInt();
+
+            output += highscore;
+
+            fis.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return  output;
+
+    }
+
 
     //Sets up the audio
     @Override
