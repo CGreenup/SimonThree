@@ -1,7 +1,5 @@
 package com.chrisgreenup.simonthree;
 
-//TODO: add writing high score to file
-//TODO: write high score from file during onCreate, unless file is empty
 //TODO: add notifier of loss
 
 import android.content.Context;

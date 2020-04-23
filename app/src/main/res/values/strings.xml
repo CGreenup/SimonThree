@@ -8,17 +8,23 @@
     <string name="simon_rewind_title">Simon: Rewind</string>
 
     <string name="simon_info">Simon will flash a sequence of lights. When Simon has finished, the
- player will have 5 seconds to press a light and each subsequent light in the correct,
+ player will have to press each light in the correct,
  sequential order</string>
 
     <string name="simon_rewind_info">Like in standard Simon, Simon will flash a sequence of lights. When Simon has finished, the
- player will have 5 seconds to press a light and each subsequent light in the correct,
+ player will have to press each light in the correct,
  reverse sequential order.</string>
 
     <string name="simon_surprise_info">Simon will flash a sequence of lights. When Simon has finished, the
- player will have 5 seconds to press a light and each subsequent light in the correct,
+ player will have to press a light and each light in the correct,
  sequential order.
     However, there will be no colors to the buttons, or unique audio tones.</string>
 
     <string name="highscore_text">Highest score:</string>
+
+    <string name="credit_title">Credit</string>
+
+    <string name="bleep_credit"> * "Bleep" sound effect recorded by Mike Koenig
+        \nhttp://soundbible.com/1252-Bleep.html
+    \n * Button flashes created by Christopher Greenup</string>
 </resources>

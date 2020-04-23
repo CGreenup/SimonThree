@@ -31,10 +31,13 @@ public class GameInfo extends AppCompatActivity {
             infoId  = R.string.simon_surprise_info;
 
         }
-        else {
+        else if ( "simon".equals(title)){
             titleId = R.string.simon_title;
             infoId  = R.string.simon_info;
-
+        }
+        else{
+            titleId = R.string.credit_title;
+            infoId = R.string.bleep_credit;
         }
 
         ((TextView) findViewById(R.id.game_info_title_tv)).setText(titleId);

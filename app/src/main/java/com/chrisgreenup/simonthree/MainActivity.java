@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity
         findViewById(R.id.play_simon_button).setOnClickListener(this);
         findViewById(R.id.play_simonSurprise_button).setOnClickListener(this);
         findViewById(R.id.play_simonRewind_button).setOnClickListener(this);
+        findViewById(R.id.credit_button).setOnClickListener(this);
 
     }
 
@@ -44,6 +45,12 @@ public class MainActivity extends AppCompatActivity
             intent = new Intent(getBaseContext(), GameInfo.class);
             intent.putExtra("title", "surprise");
         }
+        else if (id == R.id.credit_button){
+            intent = new Intent(getBaseContext(), GameInfo.class);
+            intent.putExtra("title", "credit");
+        }
+
+
         else if (id == R.id.play_simonRewind_button){
             intent = new Intent(getApplicationContext(), Game.class);
             intent.putExtra("game", "rewind");
