@@ -24,7 +24,12 @@
 
     <string name="credit_title">Credit</string>
 
-    <string name="bleep_credit"> * "Bleep" sound effect recorded by Mike Koenig
+    <string name="bleep_credit">
+        * "Bleep" sound effect recorded by Mike Koenig
         \nhttp://soundbible.com/1252-Bleep.html
-    \n * Button flashes created by Christopher Greenup</string>
+        \n
+        \n * "Computer Error Alert" sound created by Mike Koenig
+        \nhttp://soundbible.com/1540-Computer-Error-Alert.html
+        \n
+        \n * Button flashes created by Christopher Greenup</string>
 </resources>
