@@ -1,7 +1,5 @@
 package com.chrisgreenup.simonthree;
 
-//TODO: add notifier of loss
-
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioAttributes;
@@ -155,8 +153,6 @@ public class Game extends AppCompatActivity
                     break;
             }
 
-            Log.i("DSIMONSAYS" , currentColor.toString());
-
             //Make the button pressed beep
             //soundsLoaded = new HashSet<Integer>();
 
@@ -284,7 +280,6 @@ public class Game extends AppCompatActivity
         //If the player isn't playing Simon Rewind, use normal rules
         if (!gameMode.equals("rewind")){
             if (history.get(index).equals(color)){
-                Log.i("DSIMONDEBUG" , "correct color, not rewind");
                 index++;
                 return true;
             }
@@ -293,7 +288,6 @@ public class Game extends AppCompatActivity
         else{
             int size = history.size() - 1;
             if (history.get(size - index).equals(color)){
-                Log.i("DSIMONDEBUG" , "correct color, rewind");
                 index++;
                 return true;
             }
@@ -411,7 +405,6 @@ public class Game extends AppCompatActivity
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            Log.i("DSIMONDEBUG" , "history size = " + history.size());
             for (int i = 0; i < history.size(); i++) {
                 try {
                     playBeep(history.get(i));
